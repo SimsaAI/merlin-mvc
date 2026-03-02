@@ -390,15 +390,17 @@ $paginator = User::query()
 $paginator->execute();
 
 $meta = [
-    'currentPage' => $paginator->getCurrentPage(),
-    'lastPage' => $paginator->getLastPage(),
-    'totalItems' => $paginator->getTotalItems(),
-    'firstItem' => $paginator->getFirstItem(),
-    'lastItem' => $paginator->getLastItem(),
-    'pageSize' => $paginator->getPageSize(),
+    'currentPage' => $paginator->currentPage(),
+    'previousPage' => $paginator->previousPage(),
+    'nextPage' => $paginator->nextPage(),
+    'lastPage' => $paginator->lastPage(),
+    'pageSize' => $paginator->pageSize(),
+    'totalItems' => $paginator->totalItems(),
+    'firstItem' => $paginator->firstItem(),
+    'lastItem' => $paginator->lastItem(),
 ];
 
-$items = $paginator->get(); // array of User models for page 2
+$users = $paginator->get(); // array of User models for page 2
 ```
 
 You can enable reverse pagination using the third argument. It does not change your original ORDER BY. It only flips how pages are calculated, so page 1 returns the last items instead of the first ones.

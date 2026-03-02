@@ -268,9 +268,9 @@ $paginator = new Paginator(
 
 $users = $paginator->execute();  // array of items for the current page
 
-$totalItems  = $paginator->getTotalItems();
-$lastPage    = $paginator->getLastPage();
-$currentPage = $paginator->getCurrentPage();
+$totalItems  = $paginator->totalItems();
+$lastPage    = $paginator->lastPage();
+$currentPage = $paginator->currentPage();
 ```
 
 ### Advanced Query Builder

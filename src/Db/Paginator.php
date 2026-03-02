@@ -15,8 +15,9 @@ class Paginator
     protected int $lastPage = 1;
     protected int $firstItem = 0;
     protected int $lastItem = 0;
+    protected int $previousPage = 0;
+    protected int $nextPage = 0;
     protected ?array $items = null;
-    protected int $fetchModeCache = 0;
 
     /** 
      * Create a new Paginator instance.
@@ -39,66 +40,6 @@ class Paginator
     }
 
     /**
-     * Get the page size (number of items per page).
-     *
-     * @return int The page size.
-     */
-    public function getPageSize(): int
-    {
-        return $this->pageSize;
-    }
-
-    /**
-     * Get the total number of items across all pages.
-     *
-     * @return int The total number of items.
-     */
-    public function getTotalItems(): int
-    {
-        return $this->totalItems;
-    }
-
-    /**
-     * Get the last page number.
-     *
-     * @return int The last page number.
-     */
-    public function getLastPage(): int
-    {
-        return $this->lastPage;
-    }
-
-    /**
-     * Get the current page number.
-     *
-     * @return int The current page number.
-     */
-    public function getCurrentPage(): int
-    {
-        return $this->page;
-    }
-
-    /**
-     * Get the position of the first item in the current page (1-based index).
-     *
-     * @return int The position of the first item in the current page.
-     */
-    public function getFirstItem(): int
-    {
-        return $this->firstItem;
-    }
-
-    /**
-     * Get the position of the last item in the current page (1-based index).
-     *
-     * @return int The position of the last item in the current page.
-     */
-    public function getLastItem(): int
-    {
-        return $this->lastItem;
-    }
-
-    /**
      * Execute the paginated query and return the items for the current page.
      *
      * @param int $fetchMode The \PDO fetch mode to use (default: \PDO::FETCH_DEFAULT).
@@ -109,6 +50,9 @@ class Paginator
         // Count query
         $this->totalItems = $this->builder->count();
         $this->lastPage = $this->pageSize ? (int) ceil($this->totalItems / $this->pageSize) : 1;
+
+        $this->previousPage = max(1, $this->page - 1);
+        $this->nextPage = min($this->lastPage, $this->page + 1);
 
         $offset = ($this->page - 1) * $this->pageSize;
         $queryLimit = $this->pageSize;
@@ -150,4 +94,106 @@ class Paginator
     {
         return $this->items;
     }
+
+    /**
+     * Get the total number of items across all pages.
+     *
+     * @return int The total number of items.
+     */
+    public function totalItems(): int
+    {
+        return $this->totalItems;
+    }
+
+    /**
+     * Get the position of the first item in the current page (1-based index).
+     *
+     * @return int The position of the first item in the current page.
+     */
+    public function firstItem(): int
+    {
+        return $this->firstItem;
+    }
+
+    /**
+     * Get the position of the last item in the current page (1-based index).
+     *
+     * @return int The position of the last item in the current page.
+     */
+    public function lastItem(): int
+    {
+        return $this->lastItem;
+    }
+
+    /**
+     * Get the current page number.
+     *
+     * @return int The current page number.
+     */
+    public function currentPage(): int
+    {
+        return $this->page;
+    }
+
+    /**
+     * Get the page size (number of items per page).
+     *
+     * @return int The page size.
+     */
+    public function pageSize(): int
+    {
+        return $this->pageSize;
+    }
+
+    /**
+     * Get the previous page number.
+     *
+     * @return int The previous page number.
+     */
+    public function previousPage(): int
+    {
+        return $this->previousPage;
+    }
+
+    /**
+     * Get the next page number.
+     *
+     * @return int The next page number.
+     */
+    public function nextPage(): int
+    {
+        return $this->nextPage;
+    }
+
+    /**
+     * Check if there is a previous page.
+     *
+     * @return bool True if there is a previous page, false otherwise.
+     */
+    public function hasPrevious(): bool
+    {
+        return $this->previousPage >= 1;
+    }
+
+    /**
+     * Check if there is a next page.
+     *
+     * @return bool True if there is a next page, false otherwise.
+     */
+    public function hasNext(): bool
+    {
+        return $this->nextPage <= $this->lastPage;
+    }
+
+
+    /**
+     * Get the last page number.
+     *
+     * @return int The last page number.
+     */
+    public function lastPage(): int
+    {
+        return $this->lastPage;
+    }
+
 }
