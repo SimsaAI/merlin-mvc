@@ -898,8 +898,23 @@ class Condition
 	 * @param string $condition
 	 * @return string
 	 */
-	protected function protectConditionString(string $condition): string
+	protected function protectConditionString(string $condition, bool $internal = false): string
 	{
+		// Split compound conditions on top-level AND / OR and process each part recursively
+		if (!$internal) {
+			$parts = $this->splitConditionOnLogicalOperators($condition);
+			if (count($parts) > 1) {
+				$result = "";
+				foreach ($parts as [$part, $glue]) {
+					$result .= $this->protectConditionString(trim($part), true);
+					if ($glue !== null) {
+						$result .= $glue;
+					}
+				}
+				return $result;
+			}
+		}
+
 		// List of operators to search for (order matters - longer first)
 		$operators = [
 			'IS NOT NULL',
@@ -914,32 +929,92 @@ class Condition
 		];
 
 		foreach ($operators as $op) {
+
 			$pos = stripos($condition, $op);
-			if ($pos !== false) {
-				$lhs = trim(substr($condition, 0, $pos));
-				$rhs = trim(substr($condition, $pos + strlen($op)));
-
-				// Protect LHS (always an identifier)
-				$lhs = $this->protectIdentifier($lhs);
-
-				// Protect RHS if it looks like an identifier (not a literal, not empty for IS NULL)
-				if (
-					!empty($rhs) &&
-					!is_numeric($rhs) &&
-					$rhs[0] !== "'" &&
-					$rhs[0] !== '"' &&
-					$rhs[0] !== '(' &&
-					stripos($rhs, ':') === false
-				) {
-					$rhs = $this->protectIdentifier($rhs);
-				}
-
-				return $lhs . ' ' . $op . (!empty($rhs) ? ' ' . $rhs : '');
+			if ($pos === false) {
+				continue;
 			}
+
+			$lhs = trim(substr($condition, 0, $pos));
+			$rhs = trim(substr($condition, $pos + strlen($op)));
+
+			// Protect LHS (always an identifier)
+			$lhs = $this->protectIdentifier($lhs);
+
+			// Protect RHS if it looks like an identifier (not a literal, not empty for IS NULL)
+			if (
+				!empty($rhs) &&
+				!is_numeric($rhs) &&
+				$rhs[0] !== "'" &&
+				$rhs[0] !== '"' &&
+				$rhs[0] !== '(' &&
+				strpos($rhs, ':') === false
+			) {
+				$rhs = $this->protectIdentifier($rhs);
+			}
+
+			return $lhs . ' ' . $op . (!empty($rhs) ? ' ' . $rhs : '');
 		}
 
 		// No operator found - return as-is
 		return $condition;
+	}
+
+	/**
+	 * Split a condition string on top-level AND / OR keywords (respecting parentheses depth).
+	 * Returns an array of [part, glue] pairs where glue is 'AND', 'OR', or null for the last part.
+	 */
+	protected function splitConditionOnLogicalOperators(string $condition): array
+	{
+		$parts = [];
+		$len = strlen($condition);
+		$upper = strtoupper($condition); // single uppercase copy for comparisons
+		$depth = 0;
+		$start = 0;
+		$i = 0;
+
+		while ($i < $len) {
+			$ch = $condition[$i];
+
+			if ($ch === '(') {
+				$depth++;
+				$i++;
+				continue;
+			}
+			if ($ch === ')') {
+				$depth = max(0, $depth - 1);
+				$i++;
+				continue;
+			}
+
+			if ($depth === 0) {
+				// Check for " AND " or " OR " at current position using substr_compare on uppercase version for case-insensitive match
+				if ($i + 5 <= $len && substr_compare($upper, ' AND ', $i, 5, true) === 0) {
+					$part = trim(substr($condition, $start, $i - $start));
+					$parts[] = [$part, ' AND '];
+					$i += 5;
+					$start = $i;
+					continue;
+				}
+				if ($i + 4 <= $len && substr_compare($upper, ' OR ', $i, 4, true) === 0) {
+					$part = trim(substr($condition, $start, $i - $start));
+					$parts[] = [$part, ' OR '];
+					$i += 4;
+					$start = $i;
+					continue;
+				}
+			}
+
+			$i++;
+		}
+
+		// Add final part
+		$final = trim(substr($condition, $start));
+		if ($final !== '' || !empty($parts)) {
+			$parts[] = [$final, null];
+		}
+
+		return $parts;
 	}
 
 	/**

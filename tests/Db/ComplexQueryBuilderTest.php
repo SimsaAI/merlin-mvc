@@ -346,4 +346,31 @@ class ComplexQueryBuilderTest extends TestCase
 
         echo "\n\nGenerated SQL (complex CASE with Sql):\n" . $sql . "\n\n";
     }
+
+    /**
+     * Ensure join conditions containing lowercase 'and' are split and protected correctly
+     */
+    public function testJoinConditionWithAndProducesValidCountSql(): void
+    {
+        $db = new TestMysqlDatabase();
+        $q = new \Merlin\Db\Query($db);
+
+        $q->table('v2_bible_text text')
+            ->join('v2_bible_book book', 'book.translation_id = text.translation_id and book.number = text.book_number')
+            ->join('v2_bible_translation tr', 'tr.id = book.translation_id')
+            ->where("text.type = 'heading'")
+            ->where('MATCH (text.text) AGAINST (:keywords IN BOOLEAN MODE)')
+            ->where("book.language = 'de'")
+            ->bind(['keywords' => 'foo']);
+
+        $sql = $q->returnSql()->count();
+
+        // COUNT wrapper present
+        $this->assertStringContainsString('COUNT(*)', $sql);
+
+        // Both comparisons must be protected and joined with AND
+        $this->assertStringContainsString('`book`.`translation_id` = `text`.`translation_id`', $sql);
+        $this->assertStringContainsString('`book`.`number` = `text`.`book_number`', $sql);
+        $this->assertStringContainsString('AND', $sql);
+    }
 }
