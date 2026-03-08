@@ -181,7 +181,18 @@ class FunctionRegistry
             );
         };
 
-        $this->functions['json'] = static fn(mixed ...$args): string => (string) \json_encode($args);
+        $this->functions['json'] = static function (mixed ...$args): string {
+            if (\count($args) === 1) {
+                $args = $args[0];
+            }
+            return (string) \json_encode(
+                $args,
+                JSON_UNESCAPED_UNICODE
+                | JSON_UNESCAPED_SLASHES
+                | JSON_INVALID_UTF8_SUBSTITUTE
+                | JSON_PARTIAL_OUTPUT_ON_ERROR
+            );
+        };
 
         $this->functions['dump'] = static function (mixed ...$args): string {
             $result = '';
@@ -402,7 +413,14 @@ class FunctionRegistry
             return \trim($s, $separator);
         };
 
-        $this->filters['json'] = static fn(mixed ...$args): string => (string) \json_encode($args);
+        $this->filters['json'] = static fn(mixed $v): string|bool =>
+            \json_encode(
+                $v,
+                JSON_UNESCAPED_UNICODE
+                | JSON_UNESCAPED_SLASHES
+                | JSON_INVALID_UTF8_SUBSTITUTE
+                | JSON_PARTIAL_OUTPUT_ON_ERROR
+            );
     }
 
     // -------------------------------------------------------------------------

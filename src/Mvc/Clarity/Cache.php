@@ -158,6 +158,10 @@ class Cache
 
         $code = "<?php\n" . $compiled->code . "\n";
         file_put_contents($cacheFile, $code, LOCK_EX);
+        clearstatcache(true, $cacheFile);
+        if (\function_exists('opcache_invalidate')) {
+            @\opcache_invalidate($cacheFile, true);
+        }
 
         $className = require $cacheFile;
         self::$classNames[$sourcePath] = $className;
@@ -173,7 +177,11 @@ class Cache
     {
         $file = $this->cacheFilePath($sourcePath);
         if (is_file($file)) {
+            if (\function_exists('opcache_invalidate')) {
+                @\opcache_invalidate($file, true);
+            }
             @unlink($file);
+            clearstatcache(true, $file);
         }
         unset(self::$classNames[$sourcePath]);
     }
@@ -187,12 +195,22 @@ class Cache
         if (!is_dir($this->path)) {
             return;
         }
+        $hasOpcache = \function_exists('opcache_invalidate');
         $iter = new \RecursiveIteratorIterator(
             new \RecursiveDirectoryIterator($this->path, \FilesystemIterator::SKIP_DOTS),
             \RecursiveIteratorIterator::CHILD_FIRST
         );
         foreach ($iter as $file) {
-            $file->isDir() ? rmdir($file->getPathname()) : unlink($file->getPathname());
+            if ($file->isDir()) {
+                rmdir($file->getPathname());
+                continue;
+            }
+
+            $path = $file->getPathname();
+            if ($hasOpcache) {
+                @\opcache_invalidate($path, true);
+            }
+            unlink($path);
         }
         self::$classNames = [];
     }
@@ -261,14 +279,6 @@ class Cache
             self::$classNames[$sourcePath] = $className;
         }
 
-        /*
-        try {
-            $deps = (new \ReflectionClass($className))->getStaticPropertyValue('dependencies');
-            return is_array($deps) ? $deps : null;
-        } catch (\ReflectionException) {
-            return null;
-        }
-        */
         try {
             $deps = $className::$dependencies;
             return \is_array($deps) ? $deps : null;
@@ -277,10 +287,4 @@ class Cache
         }
     }
 
-    private function ensureDirectory(): void
-    {
-        if (!is_dir($this->path)) {
-            mkdir($this->path, 0755, true);
-        }
-    }
 }

@@ -158,7 +158,7 @@ loaded in this process.
 
 ---
 
-### invalidate() · [source](../../src/Mvc/Clarity/Cache.php#L172)
+### invalidate() · [source](../../src/Mvc/Clarity/Cache.php#L176)
 
 `public function invalidate(string $sourcePath): void`
 
@@ -178,7 +178,7 @@ remove it from the in-process registry.
 
 ---
 
-### flush() · [source](../../src/Mvc/Clarity/Cache.php#L185)
+### flush() · [source](../../src/Mvc/Clarity/Cache.php#L193)
 
 `public function flush(): void`
 
@@ -192,7 +192,7 @@ registry so stale class names do not prevent recompilation.
 
 ---
 
-### classNameFor() · [source](../../src/Mvc/Clarity/Cache.php#L209)
+### classNameFor() · [source](../../src/Mvc/Clarity/Cache.php#L227)
 
 `public function classNameFor(string $sourcePath): string`
 
@@ -215,7 +215,7 @@ to obtain the real class name after a template has been loaded.
 
 ---
 
-### getLoadedClassName() · [source](../../src/Mvc/Clarity/Cache.php#L218)
+### getLoadedClassName() · [source](../../src/Mvc/Clarity/Cache.php#L236)
 
 `public function getLoadedClassName(string $sourcePath): string|null`
 
@@ -235,7 +235,7 @@ given source path, or null if the template has not been loaded yet.
 
 ---
 
-### cacheFilePath() · [source](../../src/Mvc/Clarity/Cache.php#L233)
+### cacheFilePath() · [source](../../src/Mvc/Clarity/Cache.php#L251)
 
 `public function cacheFilePath(string $sourcePath): string`
 
