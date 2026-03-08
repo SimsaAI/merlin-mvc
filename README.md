@@ -2,7 +2,7 @@
 
 ![Merlin Logo](docs/images/merlin-logo-text-opt.svg)
 
-A lightweight, fast PHP framework for building modern MVC web applications and CLI tools. Merlin combines the best ideas from frameworks like Phalcon, CodeIgniter, and Laravel into a minimal yet powerful toolkit.
+A lightweight, fast PHP framework for building modern MVC web applications and CLI tools. Merlin combines the best ideas from frameworks like Phalcon, CodeIgniter, Laravel and Twig into a minimal yet powerful toolkit.
 
 ## Why Merlin?
 
@@ -77,7 +77,7 @@ A lightweight, fast PHP framework for building modern MVC web applications and C
 Install via Composer:
 
 ```bash
-composer require simsaai/merlin
+composer require simsaai/merlin-mvc
 ```
 
 ## Quick Start

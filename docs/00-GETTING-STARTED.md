@@ -12,7 +12,7 @@
 ## Installation
 
 ```bash
-composer require simsaai/merlin
+composer require simsaai/merlin-mvc
 ```
 
 ## Recommended Structure
@@ -227,14 +227,14 @@ php console.php help hello            # detailed help for one task
 
 ## About composer.json
 
-The simplest way to handle dependencies is through a `composer.json` file. This file manages dependencies, autoloading, and project metadata. Composer will automatically generate this file when you run `composer require simsaai/merlin`, but you can customize it as needed.
+The simplest way to handle dependencies is through a `composer.json` file. This file manages dependencies, autoloading, and project metadata. Composer will automatically generate this file when you run `composer require simsaai/merlin-mvc`, but you can customize it as needed.
 
 A minimal `composer.json` for your app might look like:
 
 ```json
 {
   "require": {
-    "simsaai/merlin": "latest"
+    "simsaai/merlin-mvc": "latest"
   },
   "autoload": {
     "psr-4": {
