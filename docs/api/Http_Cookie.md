@@ -308,4 +308,4 @@ Return the cookie value as a string (useful for string-casting).
 
 ---
 
-[Back to the Index ⤴](index.md)
+[Back to the Index ⤴](README.md)

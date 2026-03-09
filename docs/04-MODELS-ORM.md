@@ -362,4 +362,4 @@ Query::useModels(false);
 
 - [Database Queries](05-DATABASE-QUERIES.md)
 - [Cookbook](10-COOKBOOK.md)
-- [API Reference](api/index.md)
+- [API Reference](api/README.md)

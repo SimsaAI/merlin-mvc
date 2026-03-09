@@ -424,4 +424,4 @@ See [Validation](07-VALIDATION.md) for the complete rule reference.
 - [Clarity Engine](03b-CLARITY-ENGINE.md)
 - [MVC Routing](02-MVC-ROUTING.md)
 - [HTTP Request](06-HTTP-REQUEST.md)
-- [API Reference](api/index.md)
+- [API Reference](api/README.md)

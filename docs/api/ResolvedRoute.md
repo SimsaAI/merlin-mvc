@@ -7,13 +7,13 @@ used by the dispatcher to invoke the matched controller and action.
 
 ## 🔐 Public Properties
 
-- `public` string|null `$namespace` · [source](../../src/AppContext.php)
-- `public` string `$controller` · [source](../../src/AppContext.php)
-- `public` string `$action` · [source](../../src/AppContext.php)
-- `public` array `$params` · [source](../../src/AppContext.php)
-- `public` array `$vars` · [source](../../src/AppContext.php)
-- `public` array `$groups` · [source](../../src/AppContext.php)
-- `public` array `$override` · [source](../../src/AppContext.php)
+- `public readonly` string|null `$namespace` · [source](../../src/AppContext.php)
+- `public readonly` string `$controller` · [source](../../src/AppContext.php)
+- `public readonly` string `$action` · [source](../../src/AppContext.php)
+- `public readonly` array `$params` · [source](../../src/AppContext.php)
+- `public readonly` array `$vars` · [source](../../src/AppContext.php)
+- `public readonly` array `$groups` · [source](../../src/AppContext.php)
+- `public readonly` array `$override` · [source](../../src/AppContext.php)
 
 ## 🚀 Public methods
 
@@ -43,4 +43,4 @@ Create a new ResolvedRoute instance with the given parameters.
 
 ---
 
-[Back to the Index ⤴](index.md)
+[Back to the Index ⤴](README.md)

@@ -474,4 +474,4 @@ Resolves the configured write role via [`DatabaseManager::getOrDefault()`](Db_Da
 
 ---
 
-[Back to the Index ⤴](index.md)
+[Back to the Index ⤴](README.md)

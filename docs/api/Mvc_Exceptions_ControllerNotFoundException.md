@@ -10,4 +10,4 @@ Exception thrown when a requested controller is not found.
 
 ---
 
-[Back to the Index ⤴](index.md)
+[Back to the Index ⤴](README.md)

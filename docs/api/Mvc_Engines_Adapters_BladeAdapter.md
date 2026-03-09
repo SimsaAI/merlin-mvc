@@ -39,7 +39,7 @@ Cache location: `sys_get_temp_dir()/blade_cache` (override with `setCachePath()`
 
 `public function setCachePath(string $path): static`
 
-{@inheritdoc}
+Set the directory where compiled templates should be cached.
 
 Forces re-initialisation of the Blade compiler on the next render so the
 new path takes effect.
@@ -61,7 +61,7 @@ new path takes effect.
 
 `public function getCachePath(): string`
 
-{@inheritdoc}
+Get the currently configured cache directory.
 
 **➡️ Return value**
 
@@ -74,7 +74,7 @@ new path takes effect.
 
 `public function flushCache(): static`
 
-{@inheritdoc}
+Flush all cached compiled templates.
 
 **➡️ Return value**
 
@@ -87,7 +87,7 @@ new path takes effect.
 
 `public function addNamespace(string $name, string $path): static`
 
-{@inheritdoc}
+Add a namespace for view resolution.
 
 Also registers the namespace as a Blade hint path so templates can use
 `namespace::view.name` syntax.
@@ -96,8 +96,8 @@ Also registers the namespace as a Blade hint path so templates can use
 
 | Name | Type | Default | Description |
 |---|---|---|---|
-| `$name` | string | - |  |
-| `$path` | string | - |  |
+| `$name` | string | - | Namespace name to register. |
+| `$path` | string | - | Filesystem path corresponding to the namespace. |
 
 **➡️ Return value**
 
@@ -133,7 +133,7 @@ custom `@name(...)` syntax instead.
 
 `public function addFilter(string $name, callable $fn): static`
 
-{@inheritdoc}
+Register a custom filter callable.
 
 Blade does not support pipe-style filters.  Use `addDirective()`
 to register a custom `@{$name}` directive instead.
@@ -142,8 +142,8 @@ to register a custom `@{$name}` directive instead.
 
 | Name | Type | Default | Description |
 |---|---|---|---|
-| `$name` | string | - |  |
-| `$fn` | callable | - |  |
+| `$name` | string | - | Filter name used in templates (e.g. 'currency'). |
+| `$fn` | callable | - | fn($value, ...$args): mixed |
 
 **➡️ Return value**
 
@@ -160,7 +160,7 @@ to register a custom `@{$name}` directive instead.
 
 `public function addFunction(string $name, callable $fn): static`
 
-{@inheritdoc}
+Register a custom function callable.
 
 Blade does not have a standalone function concept equivalent to
 Twig/Plates.  Use `addDirective()` to register a custom
@@ -170,8 +170,8 @@ Twig/Plates.  Use `addDirective()` to register a custom
 
 | Name | Type | Default | Description |
 |---|---|---|---|
-| `$name` | string | - |  |
-| `$fn` | callable | - |  |
+| `$name` | string | - | Function name used in templates (e.g. 'formatDate'). |
+| `$fn` | callable | - | fn(...$args): mixed |
 
 **➡️ Return value**
 
@@ -188,7 +188,7 @@ Twig/Plates.  Use `addDirective()` to register a custom
 
 `public function getDriver(): mixed`
 
-{@inheritdoc}
+Return the underlying engine/driver object for advanced configuration.
 
 Returns the underlying `\Illuminate\View\Factory` instance for advanced
 configuration.  Initialises Blade on first call if not already done.
@@ -206,18 +206,19 @@ via `addDirective()` for compiler-level customisation.
 
 `public function render(string $view, array $vars = []): string`
 
-{@inheritdoc}
+Render a view (and optional layout) and return the result.
 
 **🧭 Parameters**
 
 | Name | Type | Default | Description |
 |---|---|---|---|
-| `$view` | string | - |  |
-| `$vars` | array | `[]` |  |
+| `$view` | string | - | View name to render. |
+| `$vars` | array | `[]` | Additional variables for this render call. |
 
 **➡️ Return value**
 
 - Type: string
+- Description: Rendered content.
 
 
 ---
@@ -226,18 +227,19 @@ via `addDirective()` for compiler-level customisation.
 
 `public function renderPartial(string $view, array $vars = []): string`
 
-{@inheritdoc}
+Render a partial view (without applying a layout) and return the output.
 
 **🧭 Parameters**
 
 | Name | Type | Default | Description |
 |---|---|---|---|
-| `$view` | string | - |  |
-| `$vars` | array | `[]` |  |
+| `$view` | string | - | View name to resolve and render. |
+| `$vars` | array | `[]` | Variables for this render call. |
 
 **➡️ Return value**
 
 - Type: string
+- Description: Rendered HTML/output.
 
 
 ---
@@ -246,22 +248,25 @@ via `addDirective()` for compiler-level customisation.
 
 `public function renderLayout(string $layout, string $content, array $vars = []): string`
 
-{@inheritdoc}
+Render a layout template wrapping provided content.
+
+The layout receives the rendered view in the `content` variable.
 
 **🧭 Parameters**
 
 | Name | Type | Default | Description |
 |---|---|---|---|
-| `$layout` | string | - |  |
-| `$content` | string | - |  |
-| `$vars` | array | `[]` |  |
+| `$layout` | string | - | Layout view name. |
+| `$content` | string | - | Previously rendered content. |
+| `$vars` | array | `[]` | Additional variables to pass to the layout. |
 
 **➡️ Return value**
 
 - Type: string
+- Description: Rendered layout output.
 
 
 
 ---
 
-[Back to the Index ⤴](index.md)
+[Back to the Index ⤴](README.md)

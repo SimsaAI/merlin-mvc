@@ -367,4 +367,4 @@ Apply all configured rules to $value, appending any errors to $errors.
 
 ---
 
-[Back to the Index ⤴](index.md)
+[Back to the Index ⤴](README.md)

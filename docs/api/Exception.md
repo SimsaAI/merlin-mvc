@@ -10,4 +10,4 @@ Base exception class for the Merlin framework.
 
 ---
 
-[Back to the Index ⤴](index.md)
+[Back to the Index ⤴](README.md)

@@ -725,4 +725,4 @@ Lines are trimmed of trailing whitespace. Empty input returns an array with one 
 
 ---
 
-[Back to the Index ⤴](index.md)
+[Back to the Index ⤴](README.md)

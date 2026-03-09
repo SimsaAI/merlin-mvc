@@ -11,7 +11,7 @@
         {{ item }}
         <div class="extras">
           {% for j in 0..9 %}
-            <span>{{ item ~ '-' ~ j }}</span>
+            <span>{{ (item ~ '-' ~ j)|upper }}</span>
           {% endfor %}
         </div>
       </li>

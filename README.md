@@ -469,7 +469,7 @@ Comprehensive guides and references:
 - **[Security](docs/09-SECURITY.md)** - Best practices and security features
 - **[Logging](docs/10-LOGGING.md)** - Application and database logging
 - **[Cookbook](docs/11-COOKBOOK.md)** - Practical recipes and examples
-- **[API Reference](docs/api/index.md)** - Complete API documentation
+- **[API Reference](docs/api/README.md)** - Complete API documentation
 
 ## Key Concepts
 
@@ -592,4 +592,4 @@ MIT License - see [LICENSE](LICENSE) file for details.
 
 ---
 
-**Made with 💖 and ⚡ by developers, for developers.**
+Built with ❤️ for developers who value security and performance

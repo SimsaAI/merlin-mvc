@@ -364,4 +364,4 @@ $router->add('GET', '/hello/{name}', 'WelcomeController::helloAction');
 ## See Also
 
 - [Controllers & Views](03-CONTROLLERS-VIEWS.md)
-- [API Reference](api/index.md)
+- [API Reference](api/README.md)

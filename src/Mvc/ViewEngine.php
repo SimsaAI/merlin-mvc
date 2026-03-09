@@ -36,7 +36,7 @@ abstract class ViewEngine
      */
     public function setExtension(string $ext): static
     {
-        if ($ext !== '' && !str_starts_with($ext, '.')) {
+        if ($ext !== '' && $ext[0] !== '.') {
             $ext = '.' . $ext;
         }
         $this->extension = $ext;
@@ -149,7 +149,7 @@ abstract class ViewEngine
      */
     public function setVars(array $vars): static
     {
-        $this->vars = array_merge($this->vars, $vars);
+        $this->vars = [...$this->vars, ...$vars];
         return $this;
     }
 
@@ -299,7 +299,7 @@ abstract class ViewEngine
     }
 
     /**
-     * Override the cache directory.
+     * Set the directory where compiled templates should be cached.
      */
     public function setCachePath(string $path): static
     {

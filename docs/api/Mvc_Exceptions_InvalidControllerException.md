@@ -10,4 +10,4 @@ Exception thrown when a controller class is found but is invalid (e.g. does not 
 
 ---
 
-[Back to the Index ⤴](index.md)
+[Back to the Index ⤴](README.md)

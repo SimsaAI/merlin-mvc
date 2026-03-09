@@ -47,14 +47,17 @@ Cache location: sys_get_temp_dir()/clarity  (configurable via setCachePath())
 
 `public function addFilter(string $name, callable $fn): static`
 
-{@inheritdoc}
+Register a custom filter callable.
+
+Filters transform a piped value and are invoked with pipe syntax,
+e.g. `{{ value|name }}` or `{{ value|name(arg) }}`.
 
 **🧭 Parameters**
 
 | Name | Type | Default | Description |
 |---|---|---|---|
-| `$name` | string | - |  |
-| `$fn` | callable | - |  |
+| `$name` | string | - | Filter name used in templates (e.g. 'currency'). |
+| `$fn` | callable | - | fn($value, ...$args): mixed |
 
 **➡️ Return value**
 
@@ -67,7 +70,7 @@ Cache location: sys_get_temp_dir()/clarity  (configurable via setCachePath())
 
 `public function addFunction(string $name, callable $fn): static`
 
-{@inheritdoc}
+Register a custom function callable.
 
 The return value is automatically cast to a plain array/scalar/null
 at the call site in compiled templates, preventing object leakage.
@@ -76,8 +79,8 @@ at the call site in compiled templates, preventing object leakage.
 
 | Name | Type | Default | Description |
 |---|---|---|---|
-| `$name` | string | - |  |
-| `$fn` | callable | - |  |
+| `$name` | string | - | Function name used in templates (e.g. 'formatDate'). |
+| `$fn` | callable | - | fn(...$args): mixed |
 
 **➡️ Return value**
 
@@ -90,7 +93,7 @@ at the call site in compiled templates, preventing object leakage.
 
 `public function setCachePath(string $path): static`
 
-{@inheritdoc}
+Set the directory where compiled templates should be cached.
 
 **🧭 Parameters**
 
@@ -109,7 +112,7 @@ at the call site in compiled templates, preventing object leakage.
 
 `public function getCachePath(): string`
 
-{@inheritdoc}
+Get the currently configured cache directory.
 
 **➡️ Return value**
 
@@ -122,7 +125,7 @@ at the call site in compiled templates, preventing object leakage.
 
 `public function flushCache(): static`
 
-{@inheritdoc}
+Flush all cached compiled templates.
 
 **➡️ Return value**
 
@@ -135,18 +138,19 @@ at the call site in compiled templates, preventing object leakage.
 
 `public function render(string $view, array $vars = []): string`
 
-{@inheritdoc}
+Render a view (and optional layout) and return the result.
 
 **🧭 Parameters**
 
 | Name | Type | Default | Description |
 |---|---|---|---|
-| `$view` | string | - |  |
-| `$vars` | array | `[]` |  |
+| `$view` | string | - | View name to render. |
+| `$vars` | array | `[]` | Additional variables for this render call. |
 
 **➡️ Return value**
 
 - Type: string
+- Description: Rendered content.
 
 
 ---
@@ -155,18 +159,19 @@ at the call site in compiled templates, preventing object leakage.
 
 `public function renderPartial(string $view, array $vars = []): string`
 
-{@inheritdoc}
+Render a partial view (without applying a layout) and return the output.
 
 **🧭 Parameters**
 
 | Name | Type | Default | Description |
 |---|---|---|---|
-| `$view` | string | - |  |
-| `$vars` | array | `[]` |  |
+| `$view` | string | - | View name to resolve and render. |
+| `$vars` | array | `[]` | Variables for this render call. |
 
 **➡️ Return value**
 
 - Type: string
+- Description: Rendered HTML/output.
 
 
 ---
@@ -175,22 +180,25 @@ at the call site in compiled templates, preventing object leakage.
 
 `public function renderLayout(string $layout, string $content, array $vars = []): string`
 
-{@inheritdoc}
+Render a layout template wrapping provided content.
+
+The layout receives the rendered view in the `content` variable.
 
 **🧭 Parameters**
 
 | Name | Type | Default | Description |
 |---|---|---|---|
-| `$layout` | string | - |  |
-| `$content` | string | - |  |
-| `$vars` | array | `[]` |  |
+| `$layout` | string | - | Layout view name. |
+| `$content` | string | - | Previously rendered content. |
+| `$vars` | array | `[]` | Additional variables to pass to the layout. |
 
 **➡️ Return value**
 
 - Type: string
+- Description: Rendered layout output.
 
 
 
 ---
 
-[Back to the Index ⤴](index.md)
+[Back to the Index ⤴](README.md)

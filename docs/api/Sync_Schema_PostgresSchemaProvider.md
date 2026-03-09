@@ -59,4 +59,4 @@ Lists tables, views, materialized views, and foreign tables.
 
 ---
 
-[Back to the Index ⤴](index.md)
+[Back to the Index ⤴](README.md)

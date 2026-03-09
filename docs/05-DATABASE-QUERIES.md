@@ -628,4 +628,4 @@ try {
 
 - [Models & ORM](04-MODELS-ORM.md)
 - [Cookbook](10-COOKBOOK.md)
-- [API Reference](api/index.md)
+- [API Reference](api/README.md)

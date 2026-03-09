@@ -115,4 +115,4 @@ Send all registered cookies by emitting their Set-Cookie headers.
 
 ---
 
-[Back to the Index ⤴](index.md)
+[Back to the Index ⤴](README.md)

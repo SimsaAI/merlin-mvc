@@ -1,4 +1,4 @@
 <header>
-    <h1><?php echo strtoupper($this->e($title)); ?></h1>
-    <p>Items: <?php echo count($items); ?></p>
+    <h1><?php echo $this->e(mb_strtoupper($title)); ?></h1>
+    <p>Items: <?php echo $this->e(count($items)); ?></p>
 </header>

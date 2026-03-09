@@ -10,8 +10,8 @@ source rather than the compiled PHP cache file.
 
 ## 🔐 Public Properties
 
-- `public` string `$templateFile` · [source](../../src/Mvc/Clarity/ClarityException.php)
-- `public` int `$templateLine` · [source](../../src/Mvc/Clarity/ClarityException.php)
+- `public readonly` string `$templateFile` · [source](../../src/Mvc/Clarity/ClarityException.php)
+- `public readonly` int `$templateLine` · [source](../../src/Mvc/Clarity/ClarityException.php)
 
 ## 🚀 Public methods
 
@@ -36,4 +36,4 @@ source rather than the compiled PHP cache file.
 
 ---
 
-[Back to the Index ⤴](index.md)
+[Back to the Index ⤴](README.md)

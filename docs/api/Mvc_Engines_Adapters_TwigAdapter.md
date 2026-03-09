@@ -40,7 +40,7 @@ Pass an empty string to disable caching.
 
 `public function setCachePath(string $path): static`
 
-{@inheritdoc}
+Set the directory where compiled templates should be cached.
 
 Pass an empty string to disable caching entirely.
 Changes take effect immediately even if Twig is already initialised.
@@ -62,7 +62,7 @@ Changes take effect immediately even if Twig is already initialised.
 
 `public function getCachePath(): string`
 
-{@inheritdoc}
+Get the currently configured cache directory.
 
 **➡️ Return value**
 
@@ -75,7 +75,7 @@ Changes take effect immediately even if Twig is already initialised.
 
 `public function flushCache(): static`
 
-{@inheritdoc}
+Flush all cached compiled templates.
 
 **➡️ Return value**
 
@@ -88,7 +88,7 @@ Changes take effect immediately even if Twig is already initialised.
 
 `public function addNamespace(string $name, string $path): static`
 
-{@inheritdoc}
+Add a namespace for view resolution.
 
 Also registers the namespace with the Twig FilesystemLoader so templates
 can reference it as `@namespace/path/to/template.twig`.  If Twig has not
@@ -98,8 +98,8 @@ been initialised yet the namespace is queued and applied on first render.
 
 | Name | Type | Default | Description |
 |---|---|---|---|
-| `$name` | string | - |  |
-| `$path` | string | - |  |
+| `$name` | string | - | Namespace name to register. |
+| `$path` | string | - | Filesystem path corresponding to the namespace. |
 
 **➡️ Return value**
 
@@ -112,7 +112,7 @@ been initialised yet the namespace is queued and applied on first render.
 
 `public function addFilter(string $name, callable $fn): static`
 
-{@inheritdoc}
+Register a custom filter callable.
 
 Registers a Twig filter callable.  Available in templates as
 `{{ value|name }}` or `{{ value|name(arg1, arg2) }}`.
@@ -123,8 +123,8 @@ Can be called before or after the first render.
 
 | Name | Type | Default | Description |
 |---|---|---|---|
-| `$name` | string | - |  |
-| `$fn` | callable | - |  |
+| `$name` | string | - | Filter name used in templates (e.g. 'currency'). |
+| `$fn` | callable | - | fn($value, ...$args): mixed |
 
 **➡️ Return value**
 
@@ -137,7 +137,7 @@ Can be called before or after the first render.
 
 `public function addFunction(string $name, callable $fn): static`
 
-{@inheritdoc}
+Register a custom function callable.
 
 Registers a Twig function callable.  Available in templates as
 `{{ name(arg1, arg2) }}`.
@@ -148,8 +148,8 @@ Can be called before or after the first render.
 
 | Name | Type | Default | Description |
 |---|---|---|---|
-| `$name` | string | - |  |
-| `$fn` | callable | - |  |
+| `$name` | string | - | Function name used in templates (e.g. 'formatDate'). |
+| `$fn` | callable | - | fn(...$args): mixed |
 
 **➡️ Return value**
 
@@ -162,7 +162,7 @@ Can be called before or after the first render.
 
 `public function getDriver(): mixed`
 
-{@inheritdoc}
+Return the underlying engine/driver object for advanced configuration.
 
 Returns the underlying `\Twig\Environment` instance for advanced
 configuration (extensions, token parsers, globals, etc.).
@@ -179,18 +179,19 @@ Initialises Twig on first call if not already done.
 
 `public function render(string $view, array $vars = []): string`
 
-{@inheritdoc}
+Render a view (and optional layout) and return the result.
 
 **🧭 Parameters**
 
 | Name | Type | Default | Description |
 |---|---|---|---|
-| `$view` | string | - |  |
-| `$vars` | array | `[]` |  |
+| `$view` | string | - | View name to render. |
+| `$vars` | array | `[]` | Additional variables for this render call. |
 
 **➡️ Return value**
 
 - Type: string
+- Description: Rendered content.
 
 
 ---
@@ -199,18 +200,19 @@ Initialises Twig on first call if not already done.
 
 `public function renderPartial(string $view, array $vars = []): string`
 
-{@inheritdoc}
+Render a partial view (without applying a layout) and return the output.
 
 **🧭 Parameters**
 
 | Name | Type | Default | Description |
 |---|---|---|---|
-| `$view` | string | - |  |
-| `$vars` | array | `[]` |  |
+| `$view` | string | - | View name to resolve and render. |
+| `$vars` | array | `[]` | Variables for this render call. |
 
 **➡️ Return value**
 
 - Type: string
+- Description: Rendered HTML/output.
 
 
 ---
@@ -219,22 +221,25 @@ Initialises Twig on first call if not already done.
 
 `public function renderLayout(string $layout, string $content, array $vars = []): string`
 
-{@inheritdoc}
+Render a layout template wrapping provided content.
+
+The layout receives the rendered view in the `content` variable.
 
 **🧭 Parameters**
 
 | Name | Type | Default | Description |
 |---|---|---|---|
-| `$layout` | string | - |  |
-| `$content` | string | - |  |
-| `$vars` | array | `[]` |  |
+| `$layout` | string | - | Layout view name. |
+| `$content` | string | - | Previously rendered content. |
+| `$vars` | array | `[]` | Additional variables to pass to the layout. |
 
 **➡️ Return value**
 
 - Type: string
+- Description: Rendered layout output.
 
 
 
 ---
 
-[Back to the Index ⤴](index.md)
+[Back to the Index ⤴](README.md)

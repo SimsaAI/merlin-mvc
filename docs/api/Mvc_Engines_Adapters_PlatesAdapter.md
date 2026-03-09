@@ -23,7 +23,7 @@ templates as `$this->filterName($value)`.
 
 `public function addNamespace(string $name, string $path): static`
 
-{@inheritdoc}
+Add a namespace for view resolution.
 
 Also registers the namespace as a Plates folder so templates can use
 `namespace::view` syntax.
@@ -32,8 +32,8 @@ Also registers the namespace as a Plates folder so templates can use
 
 | Name | Type | Default | Description |
 |---|---|---|---|
-| `$name` | string | - |  |
-| `$path` | string | - |  |
+| `$name` | string | - | Namespace name to register. |
+| `$path` | string | - | Filesystem path corresponding to the namespace. |
 
 **➡️ Return value**
 
@@ -46,7 +46,7 @@ Also registers the namespace as a Plates folder so templates can use
 
 `public function addFilter(string $name, callable $fn): static`
 
-{@inheritdoc}
+Register a custom filter callable.
 
 Plates does not distinguish between filters and functions; both are
 registered as Plates *template functions* and called inside templates as
@@ -57,8 +57,8 @@ registered as Plates *template functions* and called inside templates as
 
 | Name | Type | Default | Description |
 |---|---|---|---|
-| `$name` | string | - |  |
-| `$fn` | callable | - |  |
+| `$name` | string | - | Filter name used in templates (e.g. 'currency'). |
+| `$fn` | callable | - | fn($value, ...$args): mixed |
 
 **➡️ Return value**
 
@@ -71,7 +71,7 @@ registered as Plates *template functions* and called inside templates as
 
 `public function addFunction(string $name, callable $fn): static`
 
-{@inheritdoc}
+Register a custom function callable.
 
 Registers a Plates template function, callable inside templates as
 `$this->name($arg1, $arg2)`.
@@ -83,8 +83,8 @@ level; `addFilter()` is an alias for this method.
 
 | Name | Type | Default | Description |
 |---|---|---|---|
-| `$name` | string | - |  |
-| `$fn` | callable | - |  |
+| `$name` | string | - | Function name used in templates (e.g. 'formatDate'). |
+| `$fn` | callable | - | fn(...$args): mixed |
 
 **➡️ Return value**
 
@@ -97,7 +97,7 @@ level; `addFilter()` is an alias for this method.
 
 `public function getDriver(): mixed`
 
-{@inheritdoc}
+Return the underlying engine/driver object for advanced configuration.
 
 Returns the underlying `\League\Plates\Engine` instance for advanced
 configuration (extensions, data, etc.).
@@ -114,18 +114,19 @@ Initialises Plates on first call if not already done.
 
 `public function render(string $view, array $vars = []): string`
 
-{@inheritdoc}
+Render a view (and optional layout) and return the result.
 
 **🧭 Parameters**
 
 | Name | Type | Default | Description |
 |---|---|---|---|
-| `$view` | string | - |  |
-| `$vars` | array | `[]` |  |
+| `$view` | string | - | View name to render. |
+| `$vars` | array | `[]` | Additional variables for this render call. |
 
 **➡️ Return value**
 
 - Type: string
+- Description: Rendered content.
 
 
 ---
@@ -134,18 +135,19 @@ Initialises Plates on first call if not already done.
 
 `public function renderPartial(string $view, array $vars = []): string`
 
-{@inheritdoc}
+Render a partial view (without applying a layout) and return the output.
 
 **🧭 Parameters**
 
 | Name | Type | Default | Description |
 |---|---|---|---|
-| `$view` | string | - |  |
-| `$vars` | array | `[]` |  |
+| `$view` | string | - | View name to resolve and render. |
+| `$vars` | array | `[]` | Variables for this render call. |
 
 **➡️ Return value**
 
 - Type: string
+- Description: Rendered HTML/output.
 
 
 ---
@@ -154,22 +156,25 @@ Initialises Plates on first call if not already done.
 
 `public function renderLayout(string $layout, string $content, array $vars = []): string`
 
-{@inheritdoc}
+Render a layout template wrapping provided content.
+
+The layout receives the rendered view in the `content` variable.
 
 **🧭 Parameters**
 
 | Name | Type | Default | Description |
 |---|---|---|---|
-| `$layout` | string | - |  |
-| `$content` | string | - |  |
-| `$vars` | array | `[]` |  |
+| `$layout` | string | - | Layout view name. |
+| `$content` | string | - | Previously rendered content. |
+| `$vars` | array | `[]` | Additional variables to pass to the layout. |
 
 **➡️ Return value**
 
 - Type: string
+- Description: Rendered layout output.
 
 
 
 ---
 
-[Back to the Index ⤴](index.md)
+[Back to the Index ⤴](README.md)

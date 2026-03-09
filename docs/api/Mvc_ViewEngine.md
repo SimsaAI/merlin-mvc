@@ -358,7 +358,7 @@ separate driver object (Clarity, Native).
 
 `public function setCachePath(string $path): static`
 
-Override the cache directory.
+Set the directory where compiled templates should be cached.
 
 **🧭 Parameters**
 
@@ -400,4 +400,4 @@ Flush all cached compiled templates.
 
 ---
 
-[Back to the Index ⤴](index.md)
+[Back to the Index ⤴](README.md)

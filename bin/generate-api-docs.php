@@ -93,13 +93,13 @@ foreach ($namespacedClasses as $namespace => $classes) {
         $indexContent .= "- [{$class}](" . makeDocFileName($fqcn) . ") `{$fqcn}`\n";
     }
 }
-file_put_contents("$docsDir/index.md", $indexContent . "\n");
+file_put_contents("$docsDir/README.md", $indexContent . "\n");
 
 // Individual class docs
 foreach ($allClasses as $class => $classMeta) {
     $reflector = new ReflectionClass($class);
     $md = generateClassDoc($reflector, $docFactory, $classRegistry);
-    $md .= "\n\n---\n\n[Back to the Index ⤴](index.md)\n";
+    $md .= "\n\n---\n\n[Back to the Index ⤴](README.md)\n";
     $filename = makeDocFileName($class);
     file_put_contents("$docsDir/$filename", $md);
     echo "  ✓ {$filename}\n";
@@ -121,24 +121,20 @@ function generateClassDoc(ReflectionClass $reflector, $docFactory, array $classR
     $md .= "**Full name:** {$classLink}\n\n";
 
     // Class DocComment
-    if ($doc = $reflector->getDocComment()) {
-        try {
-            $block = $docFactory->create($doc);
-            $summary = trim((string) $block->getSummary());
-            $desc = trim((string) $block->getDescription());
-            if ($summary)
-                $md .= resolveInlineTags($summary, $classRegistry) . "\n\n";
-            if ($desc)
-                $md .= resolveInlineTags($desc, $classRegistry) . "\n\n";
-            if ($block->hasTag('deprecated')) {
-                $tag = current($block->getTagsByName('deprecated'));
-                $md .= "**🛑 Deprecated**: " . safeTagToString($tag) . "\n\n";
-            }
-            if ($block->hasTag('example')) {
-                $md .= renderExampleTags($block->getTagsByName('example'));
-            }
-        } catch (Throwable $e) {
-            $md .= trim(cleanDocBlock($doc)) . "\n\n";
+    $docData = resolveEffectiveClassDoc($reflector, $docFactory);
+    if ($docData !== null) {
+        $summary = trim($docData['summary']);
+        $desc = trim($docData['description']);
+        if ($summary)
+            $md .= resolveInlineTags($summary, $classRegistry) . "\n\n";
+        if ($desc)
+            $md .= resolveInlineTags($desc, $classRegistry) . "\n\n";
+        if (hasResolvedTag($docData, 'deprecated')) {
+            $tag = current(getResolvedTags($docData, 'deprecated'));
+            $md .= "**🛑 Deprecated**: " . safeTagToString($tag) . "\n\n";
+        }
+        if (hasResolvedTag($docData, 'example')) {
+            $md .= renderExampleTags(getResolvedTags($docData, 'example'));
         }
     }
 
@@ -167,13 +163,14 @@ function generateClassDoc(ReflectionClass $reflector, $docFactory, array $classR
         foreach ($props as $prop) {
             $vis = getVisibility($prop);
             $static = $prop->isStatic() ? ' static' : '';
+            $readonly = (method_exists($prop, 'isReadOnly') && $prop->isReadOnly()) ? ' readonly' : '';
             $typeStr = formatReflectionType($prop->getType());
             $linkedType = linkType($typeStr, $classRegistry, 'doc');
             $propSrcLink = ($srcInfo && method_exists($prop, 'getStartLine'))
                 ? ($srcInfo['srcFile'] . '#L' . $prop->getStartLine())
                 : ($srcInfo ? $srcInfo['srcFile'] : null);
             $srcRef = $propSrcLink ? " · [source]($propSrcLink)" : '';
-            $md .= "- `{$vis}{$static}` {$linkedType} `\${$prop->getName()}`{$srcRef}\n";
+            $md .= "- `{$vis}{$static}{$readonly}` {$linkedType} `\${$prop->getName()}`{$srcRef}\n";
         }
         $md .= "\n";
     }
@@ -215,25 +212,17 @@ function generateMethodDoc(ReflectionMethod $method, $docFactory, array $classRe
     $md .= "): $returnTypeStr`\n\n";
 
     // DocBlock
-    $doc = $method->getDocComment() ?: '';
-    $block = null;
-    if ($doc) {
-        try {
-            $block = $docFactory->create($doc);
-            $summary = trim((string) $block->getSummary());
-            $desc = trim((string) $block->getDescription());
-            if ($summary)
-                $md .= resolveInlineTags($summary, $classRegistry) . "\n\n";
-            if ($desc)
-                $md .= resolveInlineTags($desc, $classRegistry) . "\n\n";
-            if ($block->hasTag('deprecated')) {
-                $tag = current($block->getTagsByName('deprecated'));
-                $md .= "**🛑 Deprecated**: " . safeTagToString($tag) . "\n\n";
-            }
-        } catch (Throwable $e) {
-            $raw = cleanDocBlock($doc);
-            if ($raw)
-                $md .= $raw . "\n\n";
+    $docData = resolveEffectiveMethodDoc($method, $docFactory);
+    if ($docData !== null) {
+        $summary = trim($docData['summary']);
+        $desc = trim($docData['description']);
+        if ($summary)
+            $md .= resolveInlineTags($summary, $classRegistry) . "\n\n";
+        if ($desc)
+            $md .= resolveInlineTags($desc, $classRegistry) . "\n\n";
+        if (hasResolvedTag($docData, 'deprecated')) {
+            $tag = current(getResolvedTags($docData, 'deprecated'));
+            $md .= "**🛑 Deprecated**: " . safeTagToString($tag) . "\n\n";
         }
     }
 
@@ -242,7 +231,7 @@ function generateMethodDoc(ReflectionMethod $method, $docFactory, array $classRe
         $md .= "**🧭 Parameters**\n\n";
         $md .= "| Name | Type | Default | Description |\n";
         $md .= "|---|---|---|---|\n";
-        $paramTags = $block ? $block->getTagsByName('param') : [];
+        $paramTags = $docData !== null ? getResolvedTags($docData, 'param') : [];
         $paramTagMap = mapParamTags($paramTags);
         foreach ($method->getParameters() as $p) {
             $name = '$' . $p->getName();
@@ -264,8 +253,8 @@ function generateMethodDoc(ReflectionMethod $method, $docFactory, array $classRe
 
     // Return value
     $returnDesc = '';
-    if ($block && $block->hasTag('return')) {
-        $ret = current($block->getTagsByName('return'));
+    if ($docData !== null && hasResolvedTag($docData, 'return')) {
+        $ret = current(getResolvedTags($docData, 'return'));
         if ($ret instanceof ReturnTag) {
             $returnDesc = (string) $ret->getDescription();
         } else {
@@ -280,9 +269,9 @@ function generateMethodDoc(ReflectionMethod $method, $docFactory, array $classRe
     $md .= "\n";
 
     // Throws
-    if ($block && $block->hasTag('throws')) {
+    if ($docData !== null && hasResolvedTag($docData, 'throws')) {
         $md .= "**⚠️ Throws**\n\n";
-        foreach ($block->getTagsByName('throws') as $t) {
+        foreach (getResolvedTags($docData, 'throws') as $t) {
             if ($t instanceof ThrowsTag) {
                 $exTypeStr = ltrim(trim((string) $t->getType()), '\\');
                 $exDesc = trim((string) $t->getDescription());
@@ -296,14 +285,291 @@ function generateMethodDoc(ReflectionMethod $method, $docFactory, array $classRe
     }
 
     // Example
-    if ($block && $block->hasTag('example')) {
-        $md .= renderExampleTags($block->getTagsByName('example'));
+    if ($docData !== null && hasResolvedTag($docData, 'example')) {
+        $md .= renderExampleTags(getResolvedTags($docData, 'example'));
     }
 
     return $md;
 }
 
 /* ---------------- Helpers ---------------- */
+
+function resolveEffectiveClassDoc(ReflectionClass $reflector, DocBlockFactory $docFactory, array &$seen = []): ?array
+{
+    $key = $reflector->getName();
+    if (isset($seen[$key])) {
+        return parseDocData($reflector->getDocComment() ?: '', $docFactory);
+    }
+
+    $seen[$key] = true;
+
+    $local = parseDocData($reflector->getDocComment() ?: '', $docFactory);
+    if ($local === null || !docDataHasInheritdoc($local)) {
+        unset($seen[$key]);
+        return $local;
+    }
+
+    $inherited = null;
+    $parent = $reflector->getParentClass();
+    if ($parent !== false) {
+        $inherited = resolveEffectiveClassDoc($parent, $docFactory, $seen);
+    }
+
+    if ($inherited === null) {
+        foreach ($reflector->getInterfaces() as $interface) {
+            $inherited = resolveEffectiveClassDoc($interface, $docFactory, $seen);
+            if ($inherited !== null) {
+                break;
+            }
+        }
+    }
+
+    unset($seen[$key]);
+    return mergeResolvedDocData($local, $inherited);
+}
+
+function resolveEffectiveMethodDoc(ReflectionMethod $method, DocBlockFactory $docFactory, array &$seen = []): ?array
+{
+    $key = $method->getDeclaringClass()->getName() . '::' . $method->getName();
+    if (isset($seen[$key])) {
+        return parseDocData($method->getDocComment() ?: '', $docFactory);
+    }
+
+    $seen[$key] = true;
+
+    $local = parseDocData($method->getDocComment() ?: '', $docFactory);
+    if ($local === null || !docDataHasInheritdoc($local)) {
+        unset($seen[$key]);
+        return $local;
+    }
+
+    $prototype = findInheritedMethodPrototype($method);
+    $inherited = $prototype ? resolveEffectiveMethodDoc($prototype, $docFactory, $seen) : null;
+
+    unset($seen[$key]);
+    return mergeResolvedDocData($local, $inherited, $method);
+}
+
+function parseDocData(string $doc, DocBlockFactory $docFactory): ?array
+{
+    $doc = trim($doc);
+    if ($doc === '') {
+        return null;
+    }
+
+    try {
+        $block = $docFactory->create($doc);
+        $tagsByName = [];
+        foreach ($block->getTags() as $tag) {
+            $tagsByName[strtolower($tag->getName())][] = $tag;
+        }
+
+        return [
+            'raw' => $doc,
+            'summary' => trim((string) $block->getSummary()),
+            'description' => trim((string) $block->getDescription()),
+            'tagsByName' => $tagsByName,
+        ];
+    } catch (Throwable $e) {
+        return [
+            'raw' => $doc,
+            'summary' => '',
+            'description' => trim(cleanDocBlock($doc)),
+            'tagsByName' => [],
+        ];
+    }
+}
+
+function docDataHasInheritdoc(array $docData): bool
+{
+    return preg_match('/\{@inheritdoc\}|@inheritdoc\b/i', $docData['raw']) === 1;
+}
+
+function mergeResolvedDocData(?array $local, ?array $inherited, ?ReflectionMethod $method = null): ?array
+{
+    if ($local === null) {
+        return null;
+    }
+
+    $merged = $local;
+    $merged['summary'] = mergeInheritedText($local['summary'], $inherited['summary'] ?? '');
+    $merged['description'] = mergeInheritedText($local['description'], $inherited['description'] ?? '');
+
+    if (isPureInheritdocDoc($local)) {
+        $merged['summary'] = $inherited['summary'] ?? '';
+        $merged['description'] = $inherited['description'] ?? '';
+    }
+
+    $merged['tagsByName'] = mergeResolvedTags(
+        $local['tagsByName'] ?? [],
+        $inherited['tagsByName'] ?? [],
+        $method
+    );
+
+    return $merged;
+}
+
+function mergeInheritedText(string $local, string $inherited): string
+{
+    if ($local === '') {
+        return '';
+    }
+
+    $merged = preg_replace('/\{@inheritdoc\}|@inheritdoc\b/i', $inherited, $local);
+    return trim(preg_replace('/\n{3,}/', "\n\n", $merged ?? $local));
+}
+
+function isPureInheritdocDoc(array $docData): bool
+{
+    $body = trim(cleanDocBlock($docData['raw'] ?? ''));
+    if ($body === '') {
+        return false;
+    }
+
+    $stripped = trim((string) preg_replace('/\{@inheritdoc\}|@inheritdoc\b/i', '', $body));
+    return $stripped === '';
+}
+
+function mergeResolvedTags(array $localTagsByName, array $inheritedTagsByName, ?ReflectionMethod $method = null): array
+{
+    $merged = $inheritedTagsByName;
+
+    foreach ($localTagsByName as $name => $tags) {
+        if ($name === 'param') {
+            $merged[$name] = $method ? mergeParamTagLists($tags, $inheritedTagsByName[$name] ?? [], $method) : $tags;
+            continue;
+        }
+
+        if ($name === 'return' || $name === 'deprecated') {
+            $merged[$name] = !empty($tags) ? $tags : ($inheritedTagsByName[$name] ?? []);
+            continue;
+        }
+
+        if ($name === 'throws' || $name === 'example') {
+            $merged[$name] = mergeSequentialTags($inheritedTagsByName[$name] ?? [], $tags);
+            continue;
+        }
+
+        $merged[$name] = $tags;
+    }
+
+    return $merged;
+}
+
+function mergeParamTagLists(array $localTags, array $inheritedTags, ReflectionMethod $method): array
+{
+    $tagMap = [];
+    $order = [];
+
+    foreach ($inheritedTags as $index => $tag) {
+        $key = resolveParamTagKey($tag, $index);
+        $tagMap[$key] = $tag;
+        $order[] = $key;
+    }
+
+    foreach ($localTags as $index => $tag) {
+        $key = resolveParamTagKey($tag, $index);
+        if (!isset($tagMap[$key])) {
+            $order[] = $key;
+        }
+        $tagMap[$key] = $tag;
+    }
+
+    $ordered = [];
+    $used = [];
+    foreach ($method->getParameters() as $index => $parameter) {
+        foreach (['name:' . $parameter->getName(), 'index:' . $index] as $key) {
+            if (isset($tagMap[$key]) && !isset($used[$key])) {
+                $ordered[] = $tagMap[$key];
+                $used[$key] = true;
+                break;
+            }
+        }
+    }
+
+    foreach ($order as $key) {
+        if (!isset($used[$key]) && isset($tagMap[$key])) {
+            $ordered[] = $tagMap[$key];
+            $used[$key] = true;
+        }
+    }
+
+    return $ordered;
+}
+
+function resolveParamTagKey($tag, int $fallbackIndex): string
+{
+    if ($tag instanceof ParamTag) {
+        $varName = $tag->getVariableName();
+        if ($varName !== null && $varName !== '') {
+            return 'name:' . ltrim($varName, '$');
+        }
+    }
+
+    $text = trim(safeTagToString($tag));
+    if ($text !== '' && preg_match('/^\$?([A-Za-z0-9_]+)/', $text, $m)) {
+        return 'name:' . $m[1];
+    }
+
+    return 'index:' . $fallbackIndex;
+}
+
+function mergeSequentialTags(array $inheritedTags, array $localTags): array
+{
+    $merged = [];
+    $seen = [];
+
+    foreach (array_merge($inheritedTags, $localTags) as $tag) {
+        $key = trim(safeTagToString($tag));
+        if ($key === '') {
+            $key = spl_object_hash($tag);
+        }
+        if (isset($seen[$key])) {
+            continue;
+        }
+        $seen[$key] = true;
+        $merged[] = $tag;
+    }
+
+    return $merged;
+}
+
+function hasResolvedTag(array $docData, string $name): bool
+{
+    return !empty($docData['tagsByName'][strtolower($name)] ?? []);
+}
+
+function getResolvedTags(array $docData, string $name): array
+{
+    return $docData['tagsByName'][strtolower($name)] ?? [];
+}
+
+function findInheritedMethodPrototype(ReflectionMethod $method): ?ReflectionMethod
+{
+    try {
+        return $method->getPrototype();
+    } catch (ReflectionException) {
+    }
+
+    $name = $method->getName();
+    $class = $method->getDeclaringClass();
+
+    $parent = $class->getParentClass();
+    while ($parent !== false) {
+        if ($parent->hasMethod($name)) {
+            return $parent->getMethod($name);
+        }
+        $parent = $parent->getParentClass();
+    }
+
+    foreach ($class->getInterfaces() as $interface) {
+        if ($interface->hasMethod($name)) {
+            return $interface->getMethod($name);
+        }
+    }
+
+    return null;
+}
 
 /**
  * Render one or more @example tags as a fenced PHP code block section.

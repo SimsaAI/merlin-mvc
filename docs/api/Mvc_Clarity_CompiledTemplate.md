@@ -6,11 +6,11 @@ Value object produced by the Clarity Compiler for a single template file.
 
 ## 🔐 Public Properties
 
-- `public` string `$className` · [source](../../src/Mvc/Clarity/CompiledTemplate.php)
-- `public` string `$code` · [source](../../src/Mvc/Clarity/CompiledTemplate.php)
-- `public` array `$sourceMap` · [source](../../src/Mvc/Clarity/CompiledTemplate.php)
-- `public` array `$dependencies` · [source](../../src/Mvc/Clarity/CompiledTemplate.php)
-- `public` array `$sourceFiles` · [source](../../src/Mvc/Clarity/CompiledTemplate.php)
+- `public readonly` string `$className` · [source](../../src/Mvc/Clarity/CompiledTemplate.php)
+- `public readonly` string `$code` · [source](../../src/Mvc/Clarity/CompiledTemplate.php)
+- `public readonly` array `$sourceMap` · [source](../../src/Mvc/Clarity/CompiledTemplate.php)
+- `public readonly` array `$dependencies` · [source](../../src/Mvc/Clarity/CompiledTemplate.php)
+- `public readonly` array `$sourceFiles` · [source](../../src/Mvc/Clarity/CompiledTemplate.php)
 
 ## 🚀 Public methods
 
@@ -36,4 +36,4 @@ Value object produced by the Clarity Compiler for a single template file.
 
 ---
 
-[Back to the Index ⤴](index.md)
+[Back to the Index ⤴](README.md)

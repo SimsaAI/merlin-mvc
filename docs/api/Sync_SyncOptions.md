@@ -32,4 +32,4 @@ Configuration options that control the behavior of the model-sync process.
 
 ---
 
-[Back to the Index ⤴](index.md)
+[Back to the Index ⤴](README.md)

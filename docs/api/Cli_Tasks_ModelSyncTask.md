@@ -135,4 +135,4 @@ Scaffold a new model class from a database table and immediately sync its proper
 
 ---
 
-[Back to the Index ⤴](index.md)
+[Back to the Index ⤴](README.md)

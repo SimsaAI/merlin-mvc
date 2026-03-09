@@ -263,4 +263,4 @@ Example:  md5('/var/www/views/home/index.clarity.html') = 'a3f…'
 
 ---
 
-[Back to the Index ⤴](index.md)
+[Back to the Index ⤴](README.md)
