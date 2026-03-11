@@ -5,9 +5,9 @@
   <ul>
   {% for item, idx in items %}
     <li{% if idx % 2 == 0 %} class="even"{% endif %}>
-      {{ item }}
+      {{ item |> upper }}
       <div class="extras">
-        {% for j in 0...9 %}
+        {% for j in 0..9 %}
           <span>{{ item ~ '-' ~ j }}</span>
         {% endfor %}
       </div>

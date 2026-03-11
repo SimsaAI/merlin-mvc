@@ -6,7 +6,7 @@ echo $this->renderPartial('partials/header', ['title' => $title, 'items' => $ite
     <?php foreach ($items as $i => $item): ?>
         <li<?php if ($i % 2 === 0)
             echo ' class="even"'; ?>>
-            <?php echo esc_html($item); ?>
+            <?php echo esc_html(mb_strtoupper($item)); ?>
             <div class="extras">
                 <?php for ($j = 0; $j < 10; $j++): ?>
                     <span><?php echo esc_html($item . '-' . $j); ?></span>

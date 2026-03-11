@@ -4,7 +4,7 @@
     <?php foreach ($items as $i => $item): ?>
         <li<?php if ($i % 2 === 0)
             echo ' class="even"'; ?>>
-            <?php echo $this->e($item); ?>
+            <?php echo $this->e(mb_strtoupper($item)); ?>
             <div class="extras">
                 <?php for ($j = 0; $j < 10; $j++): ?>
                     <span><?php echo $this->e($item . '-' . $j); ?></span>

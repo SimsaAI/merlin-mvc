@@ -44,16 +44,6 @@
 - [SessionMiddleware](Http_SessionMiddleware.md) `Merlin\Http\SessionMiddleware`
 - [UploadedFile](Http_UploadedFile.md) `Merlin\Http\UploadedFile`
 
-### `Merlin\Mvc\Clarity`
-
-- [Cache](Mvc_Clarity_Cache.md) `Merlin\Mvc\Clarity\Cache`
-- [ClarityException](Mvc_Clarity_ClarityException.md) `Merlin\Mvc\Clarity\ClarityException`
-- [CompiledTemplate](Mvc_Clarity_CompiledTemplate.md) `Merlin\Mvc\Clarity\CompiledTemplate`
-- [Compiler](Mvc_Clarity_Compiler.md) `Merlin\Mvc\Clarity\Compiler`
-- [FunctionRegistry](Mvc_Clarity_FunctionRegistry.md) `Merlin\Mvc\Clarity\FunctionRegistry`
-- [Tokenizer](Mvc_Clarity_Tokenizer.md) `Merlin\Mvc\Clarity\Tokenizer`
-- [UnicodeString](Mvc_Clarity_UnicodeString.md) `Merlin\Mvc\Clarity\UnicodeString`
-
 ### `Merlin\Mvc`
 
 - [Controller](Mvc_Controller.md) `Merlin\Mvc\Controller`

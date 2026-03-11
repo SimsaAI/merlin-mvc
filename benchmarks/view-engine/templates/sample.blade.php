@@ -5,7 +5,7 @@
     <ul>
         @foreach($items as $i => $item)
             <li @if($i % 2 == 0) class="even" @endif>
-                {{ $item }}
+                {{ mb_strtoupper($item) }}
                 <div class="extras">
                     @for ($j = 0; $j < 10; $j++)
                         <span>{{ $item . '-' . $j }}</span>

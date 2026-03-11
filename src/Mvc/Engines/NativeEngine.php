@@ -17,7 +17,7 @@ namespace Merlin\Mvc\Engines {
         /** @var array<string, callable> Custom functions available in templates. */
         protected array $functions = [];
 
-        private array $renderStack = [];
+        protected array $renderStack = [];
 
         /**
          * Register a custom function callable.
