@@ -1,6 +1,6 @@
 {
   "require": {
-    "simsaai/merlin-mvc": "latest"
+    "sailantis/merlin-mvc": "latest"
   },
   "autoload": {
     "psr-4": {

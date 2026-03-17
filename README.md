@@ -77,7 +77,7 @@ A lightweight, fast PHP framework for building modern MVC web applications and C
 Install via Composer:
 
 ```bash
-composer require simsaai/merlin-mvc
+composer require sailantis/merlin-mvc
 ```
 
 ## Quick Start
